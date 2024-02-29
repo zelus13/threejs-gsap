@@ -1,2 +1,6 @@
-@import '../assets/globals';
+@import "../assets/globals";
 
+:host {
+  // height: 100%;
+  display: block;
+}
