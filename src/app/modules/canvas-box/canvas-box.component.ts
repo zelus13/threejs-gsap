@@ -7,6 +7,8 @@ import {
 } from '@angular/core';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 import { GUI } from 'dat.gui';
 import gsap from 'gsap';
 
@@ -31,18 +33,23 @@ export class CanvasBoxComponent implements OnInit {
   scene: any = THREE.Scene;
   camera: any = THREE.PerspectiveCamera;
   ambientLight: any = THREE.AmbientLight;
+  pointLight:any = THREE.PointLight;
+  fontloader: any;
 
   canvas: any;
   canvasSizes: any;
 
   controls: any = OrbitControls;
 
-  constructor(private ngZone: NgZone) {}
+  
 
+  constructor(private ngZone: NgZone) {}
   ngOnInit(): void {
     this.initThree();
     this.createThreeJsBox();
     this.render();
+    this.createPointLight();
+    this.handleMouseMove();
     this.animate();
   }
 
@@ -55,7 +62,7 @@ export class CanvasBoxComponent implements OnInit {
     this.scene = new THREE.Scene();
     this.canvas = document.getElementById('canvas-box');
 
-    //Renderer
+    //Renderer 
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvas,
     });
@@ -97,8 +104,8 @@ export class CanvasBoxComponent implements OnInit {
   }
 
   createThreeJsBox(): void {
-    const defaultColor = new THREE.Color(0x38761d);
-    const newColor = new THREE.Color(0x8fce00);
+    const defaultColor = new THREE.Color("rgb(56, 118, 29)");
+    const newColor = new THREE.Color("rgb(143, 206, 0)");
 
     //Create sphere
     const sphereGeometry1 = new THREE.SphereGeometry(
@@ -107,7 +114,8 @@ export class CanvasBoxComponent implements OnInit {
       this.heightSeg
     );
     const sphereMaterial1 = new THREE.MeshStandardMaterial({
-      color: 0x8fce00,
+      color: newColor,
+      // emissive: newColor,
     });
     const light = new THREE.PointLight(0x8fce00, 100, 0);
     light.position.set(0, 0, 0);
@@ -119,7 +127,7 @@ export class CanvasBoxComponent implements OnInit {
       this.heightSeg
     );
     const sphereMaterial2 = new THREE.MeshStandardMaterial({
-      color: 0x38761d,
+      color: defaultColor,
     });
 
     const sphereGeometry3 = new THREE.SphereGeometry(
@@ -128,7 +136,7 @@ export class CanvasBoxComponent implements OnInit {
       this.heightSeg
     );
     const sphereMaterial3 = new THREE.MeshStandardMaterial({
-      color: 0x38761d,
+      color: defaultColor,
     });
 
     const sphereGeometry4 = new THREE.SphereGeometry(
@@ -137,7 +145,7 @@ export class CanvasBoxComponent implements OnInit {
       this.heightSeg
     );
     const sphereMaterial4 = new THREE.MeshStandardMaterial({
-      color: 0x38761d,
+      color: defaultColor,
     });
 
     const sphereGeometry5 = new THREE.SphereGeometry(
@@ -146,7 +154,7 @@ export class CanvasBoxComponent implements OnInit {
       this.heightSeg
     );
     const sphereMaterial5 = new THREE.MeshStandardMaterial({
-      color: 0x38761d,
+      color: defaultColor,
     });
 
     const sphereGeometry6 = new THREE.SphereGeometry(
@@ -155,7 +163,7 @@ export class CanvasBoxComponent implements OnInit {
       this.heightSeg
     );
     const sphereMaterial6 = new THREE.MeshStandardMaterial({
-      color: 0x38761d,
+      color: defaultColor,
     });
 
     const sphere1 = new THREE.Mesh(sphereGeometry1, sphereMaterial1);
@@ -184,10 +192,16 @@ export class CanvasBoxComponent implements OnInit {
     this.ambientLight = new THREE.AmbientLight(0x8fce00);
     this.scene.add(this.ambientLight);
 
+    //Axis helper
+    const axesHelper = new THREE.AxesHelper(5);
+    this.scene.add(axesHelper);
+
     //GSAP Animation sequence
     //set sphere position, duration, delay
 
-    //Move backwards
+    //----------------------------------------------------------//
+    // Move backwards                                           //
+    //----------------------------------------------------------//
     gsap.to(sphere1.position, { z: -7, duration: 2, delay: 1 });
     gsap.to(sphere2.position, { z: -7, duration: 2, delay: 1 });
     gsap.to(sphere3.position, { z: -7, duration: 2, delay: 1 });
@@ -199,7 +213,7 @@ export class CanvasBoxComponent implements OnInit {
     gsap.to(light.position, { z: -7, duration: 2, delay: 1 });
 
     //----------------------------------------------------------//
-    // Turn into circle                                          //
+    // Turn into circle                                         //
     //----------------------------------------------------------//
     gsap.to(sphere1.position, {
       x: -2.5,
@@ -268,13 +282,6 @@ export class CanvasBoxComponent implements OnInit {
     // Rotate circle                                            //
     //----------------------------------------------------------//
     //change the light position after sphere change into circle
-    gsap.to(light.position, {
-      x: -2.5,
-      y: 2,
-      z: -7,
-      duration: 1.5,
-      delay: 5.8,
-    });
 
     gsap.to(sphere1.position, {
       x: 2,
@@ -283,6 +290,7 @@ export class CanvasBoxComponent implements OnInit {
       duration: 1.5,
       delay: 5,
     });
+
     gsap.to(sphere1.material.color, {
       r: defaultColor.r,
       g: defaultColor.g,
@@ -291,9 +299,15 @@ export class CanvasBoxComponent implements OnInit {
       duration: 2,
       delay: 5,
       onUpdate: () => {
-        sphere2.material.needsUpdate = true;
+        // defaultColor1.material.color.setRGB(
+        //   defaultColor.r,
+        //   defaultColor.g,
+        //   defaultColor.b,
+        // );
+        sphere1.material.needsUpdate = true;
       },
     });
+
 
     gsap.to(sphere2.position, {
       x: -2.5,
@@ -346,8 +360,77 @@ export class CanvasBoxComponent implements OnInit {
       delay: 5,
     });
 
-    const axesHelper = new THREE.AxesHelper(5);
-    this.scene.add(axesHelper);
+    //Rotate circle second time  //
+    gsap.to(sphere1.position, {
+      x: 5,
+      y: -0.5,
+      ease: 'power1.inOut',
+      duration: 1.5,
+      delay: 7,
+    });
+
+    gsap.to(sphere2.position, {
+      x: 2,
+      y: 3,
+      ease: 'power1.inOut',
+      duration: 1.5,
+      delay: 7,
+    });
+    gsap.to(sphere2.material.color, {
+      r: defaultColor.r,
+      g: defaultColor.g,
+      b: defaultColor.b,
+      ease: 'power1.inOut',
+      duration: 2,
+      delay: 7,
+      onUpdate: () => {
+        sphere2.material.needsUpdate = true;
+      },
+    });
+
+    gsap.to(sphere3.position, {
+      x: 3.5,
+      y: -5,
+      ease: 'power1.inOut',
+      duration: 1.5,
+      delay: 7,
+    });
+
+    gsap.to(sphere4.position, {
+      x: -2.5,
+      y: 2,
+      ease: 'power1.inOut',
+      duration: 1.5,
+      delay: 7,
+    });
+    gsap.to(sphere4.material.color, {
+      r: newColor.r,
+      g: newColor.g,
+      b: newColor.b,
+      ease: 'power1.inOut',
+      duration: 2,
+      delay: 7,
+      onUpdate: () => {
+        sphere4.material.needsUpdate = true;
+      },
+    });
+
+    gsap.to(sphere5.position, {
+      x: -4,
+      y: -2.5,
+      ease: 'power1.inOut',
+      duration: 1.5,
+      delay: 7,
+    });
+
+    gsap.to(sphere6.position, {
+      x: -1,
+      y: -6,
+      ease: 'power1.inOut',
+      duration: 1.5,
+      delay: 7,
+    });
+
 
     // Handle mouse wheel scrolling
     // let rotationSpeed = 0.1;
@@ -385,6 +468,33 @@ export class CanvasBoxComponent implements OnInit {
     this.ngZone.run(() => this.render());
   }
 
+  createPointLight() {
+    // Create a point light
+    this.pointLight = new THREE.PointLight(0xffffff, 80, 0, 1.5);
+    this.scene.add(this.pointLight);
+    
+    this.pointLight.position.set(0, 0, 0)
+  }
+
+  handleMouseMove() {
+    // Update point light position based on mouse movement
+    const handleMouseMove = (event: MouseEvent) => {
+      const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+      const mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      const vector = new THREE.Vector3(mouseX, mouseY, 0.5);
+      vector.unproject(this.camera);
+
+      const dir = vector.sub(this.camera.position).normalize();
+      const distance = -this.camera.position.z / dir.z;
+      const pos = this.camera.position.clone().add(dir.multiplyScalar(distance));
+
+      this.pointLight.position.copy(pos);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+  }
+
   render(): void {
     // sphere.rotation.x += 0.01;
     // sphere.rotation.y += 0.01;
@@ -400,11 +510,11 @@ export class CanvasBoxComponent implements OnInit {
   }
 
   toggleAnimation(): void {
-    if (this.animationId !== null) {
-      cancelAnimationFrame(this.animationId);
-      this.animationId = null;
-    } else {
-      this.animate();
-    }
+    // if (this.animationId !== null) {
+    //   cancelAnimationFrame(this.animationId);
+    //   this.renderer = null;
+    // } else {
+    //   this.animate();
+    // }
   }
 }
