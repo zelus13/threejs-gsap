@@ -33,15 +33,15 @@ export class CanvasBoxComponent implements OnInit {
   scene: any = THREE.Scene;
   camera: any = THREE.PerspectiveCamera;
   ambientLight: any = THREE.AmbientLight;
-  pointLight:any = THREE.PointLight;
+  pointLight: any = THREE.PointLight;
+  sphereGroup: any = THREE.Group;
+  side1: any = THREE.Object3D;
   fontloader: any;
 
   canvas: any;
   canvasSizes: any;
 
   controls: any = OrbitControls;
-
-  
 
   constructor(private ngZone: NgZone) {}
   ngOnInit(): void {
@@ -62,7 +62,7 @@ export class CanvasBoxComponent implements OnInit {
     this.scene = new THREE.Scene();
     this.canvas = document.getElementById('canvas-box');
 
-    //Renderer 
+    //Renderer
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvas,
     });
@@ -104,8 +104,8 @@ export class CanvasBoxComponent implements OnInit {
   }
 
   createThreeJsBox(): void {
-    const defaultColor = new THREE.Color("rgb(56, 118, 29)");
-    const newColor = new THREE.Color("rgb(143, 206, 0)");
+    const defaultColor = new THREE.Color('rgb(69, 129, 142)');
+    const newColor = new THREE.Color('rgb(143, 206, 0)');
 
     //Create sphere
     const sphereGeometry1 = new THREE.SphereGeometry(
@@ -117,7 +117,7 @@ export class CanvasBoxComponent implements OnInit {
       color: newColor,
       // emissive: newColor,
     });
-    const light = new THREE.PointLight(0x8fce00, 100, 0);
+    const light = new THREE.PointLight(0x8fce00, 70, 0);
     light.position.set(0, 0, 0);
     this.scene.add(light);
 
@@ -181,20 +181,26 @@ export class CanvasBoxComponent implements OnInit {
     sphere5.position.set(3, -3, 0);
     sphere6.position.set(10, 10, 0);
 
-    this.scene.add(sphere1);
-    this.scene.add(sphere2);
-    this.scene.add(sphere3);
-    this.scene.add(sphere4);
-    this.scene.add(sphere5);
-    this.scene.add(sphere6);
+    //Group Sphere
+    this.sphereGroup = new THREE.Group();
+    this.sphereGroup.add(sphere1, sphere2, sphere3, sphere4, sphere5, sphere6);
+    this.scene.add(this.sphereGroup);
+
+    this.side1 = new THREE.Object3D();
+    this.sphereGroup.add(this.side1);
+    this.side1.position.set(0, 0, -7);
 
     // Add ambient light to the scene
-    this.ambientLight = new THREE.AmbientLight(0x8fce00);
+    this.ambientLight = new THREE.AmbientLight(defaultColor);
     this.scene.add(this.ambientLight);
 
     //Axis helper
     const axesHelper = new THREE.AxesHelper(5);
     this.scene.add(axesHelper);
+    //Axis Sphere Group Helper
+    // const sphereAxesHelper = new THREE.AxesHelper(10);
+    // sphereAxesHelper.position.copy(this.sphereGroup.position);
+    // this.scene.add(sphereAxesHelper);
 
     //GSAP Animation sequence
     //set sphere position, duration, delay
@@ -216,8 +222,8 @@ export class CanvasBoxComponent implements OnInit {
     // Turn into circle                                         //
     //----------------------------------------------------------//
     gsap.to(sphere1.position, {
-      x: -2.5,
-      y: 2,
+      x: -3.75,
+      y: 2.25,
       z: -10,
       ease: 'power1.in',
       duration: 1.5,
@@ -230,207 +236,249 @@ export class CanvasBoxComponent implements OnInit {
       delay: 4,
     });
     //change the light position after sphere change into circle
+    // gsap.to(light.position, {
+    //   x: -3.5,
+    //   y: 2,
+    //   z: -7,
+    //   ease: 'power4.out',
+    //   duration: 1.5,
+    //   delay: 3.8,
+    // });
+
+    gsap.to(sphere2.position, {
+      x: -3.75,
+      y: -2.25,
+      ease: 'power1.inOut',
+      duration: 1.5,
+      delay: 3,
+    });
+
+    gsap.to(sphere3.position, {
+      x: 0,
+      y: 4.75,
+      ease: 'power1.inOut',
+      duration: 1.5,
+      delay: 3,
+    });
+
+    gsap.to(sphere4.position, {
+      x: 0,
+      y: -4.75,
+      ease: 'power1.inOut',
+      duration: 1.5,
+      delay: 3,
+    });
+
+    gsap.to(sphere5.position, {
+      x: 3.75,
+      y: -2.25,
+      ease: 'power1.inOut',
+      duration: 1.5,
+      delay: 3,
+    });
+
+    gsap.to(sphere6.position, {
+      x: 3.75,
+      y: 2.25,
+      ease: 'power1.inOut',
+      duration: 1.5,
+      delay: 3,
+    });
+
+    //Adjust position of sphere group//
+    gsap.to(this.sphereGroup.position, {
+      x: 2,
+      y: -1,
+      ease: 'power1.inOut',
+      duration: 1.5,
+      delay: 3,
+    });
+
+    gsap.to(this.sphereGroup.rotation, {
+      z: -(3 / 100) * (2 * Math.PI), // Rotate sphere group for 3%
+      // z: Math.PI * 2,
+      // repeat: -1,
+      ease: 'power1.inOut',
+      // ease: "power0",
+      duration: 1.5,
+      delay: 3,
+    });
+
     gsap.to(light.position, {
-      x: -2.5,
-      y: 2,
+      x: -1.5,
+      y: 2.5,
       z: -7,
-      duration: 1.5,
-      delay: 3.8,
-    });
-
-    gsap.to(sphere2.position, {
-      x: -4,
-      y: -2.5,
       ease: 'power1.inOut',
       duration: 1.5,
-      delay: 3,
+      delay: 3.5,
     });
 
-    gsap.to(sphere3.position, {
-      x: 2,
-      y: 3,
-      ease: 'power1.inOut',
-      duration: 1.5,
-      delay: 3,
-    });
-
-    gsap.to(sphere4.position, {
-      x: -1,
-      y: -6,
-      ease: 'power1.inOut',
-      duration: 1.5,
-      delay: 3,
-    });
-
-    gsap.to(sphere5.position, {
-      x: 3.5,
-      y: -5,
-      ease: 'power1.inOut',
-      duration: 1.5,
-      delay: 3,
-    });
-
-    gsap.to(sphere6.position, {
-      x: 5,
-      y: -0.5,
-      ease: 'power1.inOut',
-      duration: 1.5,
-      delay: 3,
-    });
-
-    //----------------------------------------------------------//
-    // Rotate circle                                            //
-    //----------------------------------------------------------//
-    //change the light position after sphere change into circle
-
-    gsap.to(sphere1.position, {
-      x: 2,
-      y: 3,
-      ease: 'power1.inOut',
-      duration: 1.5,
+    gsap.to(this.sphereGroup.rotation, {
+      z: Math.PI * 2,
+      repeat: -1,
+      ease: "none",
+      duration: 10,
       delay: 5,
     });
 
-    gsap.to(sphere1.material.color, {
-      r: defaultColor.r,
-      g: defaultColor.g,
-      b: defaultColor.b,
-      ease: 'power1.inOut',
-      duration: 2,
-      delay: 5,
-      onUpdate: () => {
-        // defaultColor1.material.color.setRGB(
-        //   defaultColor.r,
-        //   defaultColor.g,
-        //   defaultColor.b,
-        // );
-        sphere1.material.needsUpdate = true;
-      },
-    });
+    // //----------------------------------------------------------//
+    // // Rotate circle                                            //
+    // //----------------------------------------------------------//
 
+    // gsap.to(this.sphereGroup, {
+    //   onUpdate: () => {
+    //     this.sphereGroup.rotation.z += 0.01;
+    //   }
+    // })
 
-    gsap.to(sphere2.position, {
-      x: -2.5,
-      y: 2,
-      ease: 'power1.inOut',
-      duration: 1.5,
-      delay: 5,
-    });
-    gsap.to(sphere2.material.color, {
-      r: newColor.r,
-      g: newColor.g,
-      b: newColor.b,
-      ease: 'power1.inOut',
-      duration: 2,
-      delay: 5,
-      onUpdate: () => {
-        sphere2.material.needsUpdate = true;
-      },
-    });
+    // //change the light position after sphere change into circle
 
-    gsap.to(sphere3.position, {
-      x: 5,
-      y: -0.5,
-      ease: 'power1.inOut',
-      duration: 1.5,
-      delay: 5,
-    });
+    // gsap.to(sphere1.position, {
+    //   x: 2,
+    //   y: 3,
+    //   ease: 'power1.inOut',
+    //   duration: 1.5,
+    //   delay: 5,
+    // });
 
-    gsap.to(sphere4.position, {
-      x: -4,
-      y: -2.5,
-      ease: 'power1.inOut',
-      duration: 1.5,
-      delay: 5,
-    });
+    // gsap.to(sphere1.material.color, {
+    //   r: defaultColor.r,
+    //   g: defaultColor.g,
+    //   b: defaultColor.b,
+    //   ease: 'power1.inOut',
+    //   duration: 2,
+    //   delay: 5,
+    //   onUpdate: () => {
+    //     // defaultColor1.material.color.setRGB(
+    //     //   defaultColor.r,
+    //     //   defaultColor.g,
+    //     //   defaultColor.b,
+    //     // );
+    //     sphere1.material.needsUpdate = true;
+    //   },
+    // });
 
-    gsap.to(sphere5.position, {
-      x: -1,
-      y: -6,
-      ease: 'power1.inOut',
-      duration: 1.5,
-      delay: 5,
-    });
+    // gsap.to(sphere2.position, {
+    //   x: -2.5,
+    //   y: 2,
+    //   ease: 'power1.inOut',
+    //   duration: 1.5,
+    //   delay: 5,
+    // });
+    // gsap.to(sphere2.material.color, {
+    //   r: newColor.r,
+    //   g: newColor.g,
+    //   b: newColor.b,
+    //   ease: 'power1.inOut',
+    //   duration: 2,
+    //   delay: 5,
+    //   onUpdate: () => {
+    //     sphere2.material.needsUpdate = true;
+    //   },
+    // });
 
-    gsap.to(sphere6.position, {
-      x: 3.5,
-      y: -5,
-      ease: 'power1.inOut',
-      duration: 1.5,
-      delay: 5,
-    });
+    // gsap.to(sphere3.position, {
+    //   x: 5,
+    //   y: -0.5,
+    //   ease: 'power1.inOut',
+    //   duration: 1.5,
+    //   delay: 5,
+    // });
 
-    //Rotate circle second time  //
-    gsap.to(sphere1.position, {
-      x: 5,
-      y: -0.5,
-      ease: 'power1.inOut',
-      duration: 1.5,
-      delay: 7,
-    });
+    // gsap.to(sphere4.position, {
+    //   x: -4,
+    //   y: -2.5,
+    //   ease: 'power1.inOut',
+    //   duration: 1.5,
+    //   delay: 5,
+    // });
 
-    gsap.to(sphere2.position, {
-      x: 2,
-      y: 3,
-      ease: 'power1.inOut',
-      duration: 1.5,
-      delay: 7,
-    });
-    gsap.to(sphere2.material.color, {
-      r: defaultColor.r,
-      g: defaultColor.g,
-      b: defaultColor.b,
-      ease: 'power1.inOut',
-      duration: 2,
-      delay: 7,
-      onUpdate: () => {
-        sphere2.material.needsUpdate = true;
-      },
-    });
+    // gsap.to(sphere5.position, {
+    //   x: -1,
+    //   y: -6,
+    //   ease: 'power1.inOut',
+    //   duration: 1.5,
+    //   delay: 5,
+    // });
 
-    gsap.to(sphere3.position, {
-      x: 3.5,
-      y: -5,
-      ease: 'power1.inOut',
-      duration: 1.5,
-      delay: 7,
-    });
+    // gsap.to(sphere6.position, {
+    //   x: 3.5,
+    //   y: -5,
+    //   ease: 'power1.inOut',
+    //   duration: 1.5,
+    //   delay: 5,
+    // });
 
-    gsap.to(sphere4.position, {
-      x: -2.5,
-      y: 2,
-      ease: 'power1.inOut',
-      duration: 1.5,
-      delay: 7,
-    });
-    gsap.to(sphere4.material.color, {
-      r: newColor.r,
-      g: newColor.g,
-      b: newColor.b,
-      ease: 'power1.inOut',
-      duration: 2,
-      delay: 7,
-      onUpdate: () => {
-        sphere4.material.needsUpdate = true;
-      },
-    });
+    // //Rotate circle second time  //
+    // gsap.to(sphere1.position, {
+    //   x: 5,
+    //   y: -0.5,
+    //   ease: 'power1.inOut',
+    //   duration: 1.5,
+    //   delay: 7,
+    // });
 
-    gsap.to(sphere5.position, {
-      x: -4,
-      y: -2.5,
-      ease: 'power1.inOut',
-      duration: 1.5,
-      delay: 7,
-    });
+    // gsap.to(sphere2.position, {
+    //   x: 2,
+    //   y: 3,
+    //   ease: 'power1.inOut',
+    //   duration: 1.5,
+    //   delay: 7,
+    // });
+    // gsap.to(sphere2.material.color, {
+    //   r: defaultColor.r,
+    //   g: defaultColor.g,
+    //   b: defaultColor.b,
+    //   ease: 'power1.inOut',
+    //   duration: 2,
+    //   delay: 7,
+    //   onUpdate: () => {
+    //     sphere2.material.needsUpdate = true;
+    //   },
+    // });
 
-    gsap.to(sphere6.position, {
-      x: -1,
-      y: -6,
-      ease: 'power1.inOut',
-      duration: 1.5,
-      delay: 7,
-    });
+    // gsap.to(sphere3.position, {
+    //   x: 3.5,
+    //   y: -5,
+    //   ease: 'power1.inOut',
+    //   duration: 1.5,
+    //   delay: 7,
+    // });
 
+    // gsap.to(sphere4.position, {
+    //   x: -2.5,
+    //   y: 2,
+    //   ease: 'power1.inOut',
+    //   duration: 1.5,
+    //   delay: 7,
+    // });
+    // gsap.to(sphere4.material.color, {
+    //   r: newColor.r,
+    //   g: newColor.g,
+    //   b: newColor.b,
+    //   ease: 'power1.inOut',
+    //   duration: 2,
+    //   delay: 7,
+    //   onUpdate: () => {
+    //     sphere4.material.needsUpdate = true;
+    //   },
+    // });
+
+    // gsap.to(sphere5.position, {
+    //   x: -4,
+    //   y: -2.5,
+    //   ease: 'power1.inOut',
+    //   duration: 1.5,
+    //   delay: 7,
+    // });
+
+    // gsap.to(sphere6.position, {
+    //   x: -1,
+    //   y: -6,
+    //   ease: 'power1.inOut',
+    //   duration: 1.5,
+    //   delay: 7,
+    // });
 
     // Handle mouse wheel scrolling
     // let rotationSpeed = 0.1;
@@ -469,11 +517,16 @@ export class CanvasBoxComponent implements OnInit {
   }
 
   createPointLight() {
-    // Create a point light
-    this.pointLight = new THREE.PointLight(0xffffff, 80, 0, 1.5);
+    //Create a point light
+    this.pointLight = new THREE.PointLight(0x6aa84f, 50, 0, 1.5);
     this.scene.add(this.pointLight);
-    
-    this.pointLight.position.set(0, 0, 0)
+    // this.pointLight.position.set(0,0, 100)
+
+    // gsap.to(this.pointLight.position, {
+    //   z: -7,
+    //   duration: 2,
+    //   delay: 1,
+    // });
   }
 
   handleMouseMove() {
@@ -486,8 +539,11 @@ export class CanvasBoxComponent implements OnInit {
       vector.unproject(this.camera);
 
       const dir = vector.sub(this.camera.position).normalize();
+
       const distance = -this.camera.position.z / dir.z;
-      const pos = this.camera.position.clone().add(dir.multiplyScalar(distance));
+      const pos = this.camera.position
+        .clone()
+        .add(dir.multiplyScalar(distance));
 
       this.pointLight.position.copy(pos);
     };
@@ -496,7 +552,16 @@ export class CanvasBoxComponent implements OnInit {
   }
 
   render(): void {
-    // sphere.rotation.x += 0.01;
+    // this.sphereGroup.position.set(-1, 1, -7);
+    // this.sphereGroup.rotation.z += 0.01;
+
+    // gsap.to(this.sphereGroup.position, {
+    //   delay: 4,
+    //   duration: 2,
+    //   x: -1,
+    //   y: 1,
+    // });
+
     // sphere.rotation.y += 0.01;
     // lineWireframe.rotation.x += 0.01;
     // lineWireframe.rotation.y += 0.01;
