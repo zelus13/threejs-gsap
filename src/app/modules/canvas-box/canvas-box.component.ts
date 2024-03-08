@@ -317,9 +317,76 @@ export class CanvasBoxComponent implements OnInit {
       z: Math.PI * 2,
       repeat: -1,
       ease: "none",
-      duration: 10,
+      duration: 12,
       delay: 5,
     });
+
+
+    //Change color
+    //sphere number are following from left sphere1 to right
+    gsap.to(sphere1.material.color, {
+      r: defaultColor.r,
+      g: defaultColor.g,
+      b: defaultColor.b,
+      delay: 5,
+      duration: 0.5
+    })
+
+    gsap.to(sphere3.material.color, {
+      r: newColor.r,
+      g: newColor.g,
+      b: newColor.b,
+      delay: 6,
+      duration: 0.5
+    })
+
+    gsap.to(sphere3.material.color, {
+      r: defaultColor.r,
+      g: defaultColor.g,
+      b: defaultColor.b,
+      delay: 8,
+      duration: 0.5
+    })
+
+    gsap.to(sphere6.material.color, {
+      r: newColor.r,
+      g: newColor.g,
+      b: newColor.b,
+      delay: 8,
+      duration: 0.5
+    })
+
+    gsap.to(sphere6.material.color, {
+      r: defaultColor.r,
+      g: defaultColor.g,
+      b: defaultColor.b,
+      delay: 10,
+      duration: 0.5
+    })
+
+    gsap.to(sphere5.material.color, {
+      r: newColor.r,
+      g: newColor.g,
+      b: newColor.b,
+      delay: 10,
+      duration: 0.5
+    })
+
+    gsap.to(sphere5.material.color, {
+      r: defaultColor.r,
+      g: defaultColor.g,
+      b: defaultColor.b,
+      delay: 12,
+      duration: 0.5
+    })
+
+    gsap.to(sphere4.material.color, {
+      r: newColor.r,
+      g: newColor.g,
+      b: newColor.b,
+      delay: 12,
+      duration: 0.5
+    })
 
     // //----------------------------------------------------------//
     // // Rotate circle                                            //
