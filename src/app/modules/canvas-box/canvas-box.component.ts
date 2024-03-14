@@ -294,8 +294,10 @@ export class CanvasBoxComponent implements OnInit {
       delay: 3,
     });
 
+    const rotate30 = -(3 / 100) * (2 * Math.PI)
+
     gsap.to(this.sphereGroup.rotation, {
-      z: -(3 / 100) * (2 * Math.PI), // Rotate sphere group for 3%
+      z: rotate30, // Rotate sphere group for 3%
       // z: Math.PI * 2,
       // repeat: -1,
       ease: 'power1.inOut',
@@ -314,79 +316,126 @@ export class CanvasBoxComponent implements OnInit {
     });
 
     gsap.to(this.sphereGroup.rotation, {
-      z: Math.PI * 2,
+      z: (Math.PI * 2) + rotate30,
       repeat: -1,
-      ease: "none",
+      ease: "power0",
       duration: 12,
       delay: 5,
     });
 
+    // this.sphereGroup.rotation.z += 0.01;
+
 
     //Change color
     //sphere number are following from left sphere1 to right
-    gsap.to(sphere1.material.color, {
-      r: defaultColor.r,
-      g: defaultColor.g,
-      b: defaultColor.b,
-      delay: 5,
-      duration: 0.5
-    })
+    const timeline = gsap.timeline({ repeat: -1, delay: 5, repeatDelay: 0 });
 
-    gsap.to(sphere3.material.color, {
+    gsap.fromTo(sphere1.material.color, {
       r: newColor.r,
       g: newColor.g,
       b: newColor.b,
-      delay: 6,
-      duration: 0.5
-    })
-
-    gsap.to(sphere3.material.color, {
+      duration: 1,
+    }, {
       r: defaultColor.r,
       g: defaultColor.g,
       b: defaultColor.b,
-      delay: 8,
-      duration: 0.5
     })
 
-    gsap.to(sphere6.material.color, {
-      r: newColor.r,
-      g: newColor.g,
-      b: newColor.b,
-      delay: 8,
-      duration: 0.5
-    })
-
-    gsap.to(sphere6.material.color, {
+    timeline.to(sphere1.material.color, {
       r: defaultColor.r,
       g: defaultColor.g,
       b: defaultColor.b,
-      delay: 10,
-      duration: 0.5
-    })
+      // delay: 5,
+      duration: 1,
+    });
 
-    gsap.to(sphere5.material.color, {
-      r: newColor.r,
-      g: newColor.g,
-      b: newColor.b,
-      delay: 10,
-      duration: 0.5
-    })
-
-    gsap.to(sphere5.material.color, {
+    timeline.to(sphere1.material.color, {
       r: defaultColor.r,
       g: defaultColor.g,
       b: defaultColor.b,
-      delay: 12,
-      duration: 0.5
-    })
+      // delay: 5,
+      duration: 1,
+    });
 
-    gsap.to(sphere4.material.color, {
+    timeline.to(sphere3.material.color, {
       r: newColor.r,
       g: newColor.g,
       b: newColor.b,
-      delay: 12,
-      duration: 0.5
-    })
+      // delay: 7,
+      duration: 1,
+    });
+
+    timeline.to(sphere3.material.color, {
+      r: defaultColor.r,
+      g: defaultColor.g,
+      b: defaultColor.b,
+      // delay: 9,
+      duration: 1,
+    });
+
+    timeline.to(sphere6.material.color, {
+      r: newColor.r,
+      g: newColor.g,
+      b: newColor.b,
+      // delay: 9,
+      duration: 1,
+    });
+
+    timeline.to(sphere6.material.color, {
+      r: defaultColor.r,
+      g: defaultColor.g,
+      b: defaultColor.b,
+      // delay: 11,
+      duration: 1,
+    });
+
+    timeline.to(sphere5.material.color, {
+      r: newColor.r,
+      g: newColor.g,
+      b: newColor.b,
+      // delay: 11,
+      duration: 1,
+    });
+
+    timeline.to(sphere5.material.color, {
+      r: defaultColor.r,
+      g: defaultColor.g,
+      b: defaultColor.b,
+      // delay: 13,
+      duration: 1,
+    });
+
+    timeline.to(sphere4.material.color, {
+      r: newColor.r,
+      g: newColor.g,
+      b: newColor.b,
+      // delay: 13,
+      duration: 1,
+    });
+
+    timeline.to(sphere4.material.color, {
+      r: defaultColor.r,
+      g: defaultColor.g,
+      b: defaultColor.b,
+      // delay: 15,
+      duration: 1,
+    });
+
+    timeline.to(sphere2.material.color, {
+      r: newColor.r,
+      g: newColor.g,
+      b: newColor.b,
+      // delay: 15,
+      duration: 1,
+    });
+
+    timeline.to(sphere2.material.color, {
+      r: defaultColor.r,
+      g: defaultColor.g,
+      b: defaultColor.b,
+      // delay: 17,
+      duration: 1,
+    });
 
     // //----------------------------------------------------------//
     // // Rotate circle                                            //
@@ -620,7 +669,6 @@ export class CanvasBoxComponent implements OnInit {
 
   render(): void {
     // this.sphereGroup.position.set(-1, 1, -7);
-    // this.sphereGroup.rotation.z += 0.01;
 
     // gsap.to(this.sphereGroup.position, {
     //   delay: 4,
@@ -639,6 +687,8 @@ export class CanvasBoxComponent implements OnInit {
 
     // Render
     this.renderer.render(this.scene, this.camera);
+    // console.log("render");
+    
   }
 
   toggleAnimation(): void {
